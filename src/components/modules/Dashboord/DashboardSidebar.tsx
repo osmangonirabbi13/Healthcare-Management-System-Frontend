@@ -1,0 +1,27 @@
+import { getDefaultDashboardRoute } from "@/lib/authUtils"
+import { getNavItemsByRole } from "@/lib/navItems"
+import { NavSection } from "@/types/dashboard.types"
+import DashboardSidebarContent from "./DashboardSidebarContent"
+import { getUserInfo } from "@/services/auth.service"
+
+const DashboardSidebar = async () => {
+  const userInfo = await getUserInfo()
+
+  if (!userInfo) {
+    return <div>Unable to load user info</div>;
+  }
+
+  if (!userInfo?.role) {
+    return <div>User not authenticated</div>;
+  }
+
+  const navItems : NavSection[] = getNavItemsByRole(userInfo.role)
+
+  const dashboardHome = getDefaultDashboardRoute(userInfo.role)
+
+  return (
+    <DashboardSidebarContent userInfo={userInfo} navItems={navItems} dashboardHome={dashboardHome}/>
+  )
+}
+
+export default DashboardSidebar
